@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <sys/time.h> /* for gettimeofday */
 #include <stdlib.h> /* for atoi */
-
+#include <signal.h>
 #define TRUE 1
 
 /* This is the gateway program. It opens a socket,
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
 	bzero((char*)&rcvr, sizeof(rcvr));
 	rcvr.sin_addr.s_addr = INADDR_ANY;
 	rcvr.sin_port = 0;
-	if( bind(sd, struct sockaddr*) &rcvr, sizeof(rcvr))){
+	if( bind(sd, (struct sockaddr*) &rcvr, sizeof(rcvr))){
 		perror("binding socket name");
 		exit(1);
 	}
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
 	bzero(serverName, sizeof(serverName));
 	char serverPort[length500];
 	bzero(serverPort, sizeof(serverPort));
-	car fileName[255];
+	char fileName[255];
 	bzero(fileName, sizeof(fileName));
 	int isConnected = 1;
 	bcopy(buf, serverName, sizeof(serverName));
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
 	system("date");
 	
 	/* now connect to the server */
-	int sock
+	int sock;
 	struct sockaddr_in server, client;
 	struct hostent *hp, *gethostbyname();
 	
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]){
 		sndtime.tv_sec, sndtime.tv_usec);
 	system("date");
 	bzero(buf, sizeof(buf));
-	
+	int length255 = 255;
 	// write out the filename to the server
 	if((rval = write(sock, fileName, length255)) < 0){
 		perror("error writing fielName to server");
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]){
 		// stick this in my buffer
 		bcopy(buf, (char*) &clientBuffer[iCb * buflen], buflen);
 		if(iCb == 2){
-			iCb = 0
+			iCb = 0;
 		}else{
 			iCb++;
 		}
@@ -209,7 +209,7 @@ int main(int argc, char *argv[]){
 				}
 				bcopy((char*) &clientBuffer[iLow * buflen], buf, buflen);
 				int curSeq = 0;
-				sscarnf(buf, "%d", &curSeq);
+				sscanf(buf, "%d", &curSeq);
 				
 				// keep track of the lowest in our buffer
 				if(curSeq < minBufferedPacket){
@@ -220,7 +220,7 @@ int main(int argc, char *argv[]){
 					printf("Gateway resending packet %d \n", curSeq);
 					system("date");
 					
-					if((reval = write(sda, buf, buflen)) < 0){
+					if( write(sda, buf, buflen) < 0){
 						perror("Gateway error sending buffered packets to client \n");
 					}
 					total++;
@@ -243,7 +243,7 @@ int main(int argc, char *argv[]){
 	close(sock);
 	printf("Gateway complete\n");
 	system("date");
-	printf("Sent %d packets\n, total);
+	printf("Sent %d packets\n", total);
 	
 	// close connection to client
 	close(sda);

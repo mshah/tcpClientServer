@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
 	struct sockaddr_in server, client;
 	struct hostent *hp, *gethostbyname();
 	static int buflen = 1024;
-	car buf[1024];
+	char buf[1024];
 	int rval;
 	int seqno, length;
 	struct timeval sndtime;
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 	bcopy(hp->h_addr, &server.sin_addr, hp->h_length);
-	server.sin_port = htons(atoi(argv[5]);
+	server.sin_port = htons(atoi(argv[5]));
 	
 	/* find out assigned port number and print out */
 	if (getsockname(sock, (struct sockaddr *)&client, (socklen_t*)&length)){
@@ -88,13 +88,13 @@ int main(int argc, char *argv[]){
 	static int length255 = 255;
 	bzero(serverPort, sizeof(serverPort));
 	bcopy(argv[1], serverName, length255);
-	bcopy{argv[2], serverPort, length255);
-	
+	bcopy(argv[2], serverPort, length255);
+	int rrval = 0;
 	if ((rrval = write(sock, serverPort, length255)) < 0){
 		perror("error writing serverName to gateway");
 	}
 	
-	if ((rval = write(sock, serverPot, length255)) < 0){
+	if ((rval = write(sock, serverPort, length255)) < 0){
 		perror("error writing portnumber to gayway");
 	}
 	
@@ -103,14 +103,14 @@ int main(int argc, char *argv[]){
 	bzero(file, sizeof(file));
 	bcopy(argv[3], file, length255);
 	
-	if (rrval = write(sock, file, length255)) < 0){
+	if ((rrval = write(sock, file, length255)) < 0){
 		perror("error writing file name to gateway");
 	}
 	
 	// Open the output file for writing
-	FILE p*file = fopen("./outputfile", "w");
+	FILE *pFile = fopen("./outputfile", "w");
 	
-	printf("sent the gateway the file :%s, host: %s, port: %s\n", file serverName, 
+	printf("sent the gateway the file :%s, host: %s, port: %s\n", pFile, serverName, 
 		serverPort);
 	
 	int receivedTotal = 0;

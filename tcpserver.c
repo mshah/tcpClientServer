@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
 	int sd, sda, length, seqno, rval;
 	struct sockaddr_in rcvr;
 	static int buflen = 500;
-	car buf[buflen];
+	char buf[buflen];
 	struct timeval sndtime;
 	struct timezone zone;
 	
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
 	bzero((char*)&rcvr, sizeof(rcvr));
 	rcvr.sin_addr.s_addr = INADDR_ANY;
 	rcvr.sin_port = 0;
-	if( bind(sd, struct sockaddr*) &rcvr, sizeof(rcvr))){
+	if( bind(sd, (struct sockaddr*) &rcvr, sizeof(rcvr)) == -1){
 		perror("binding socket name");
 		exit(1);
 	}
@@ -94,9 +94,10 @@ int main(int argc, char *argv[]){
 			char* filebuf;
 			filebuf = (char*) malloc(sizeof(char)* filebuflen);
 			fseek(pFile, 0, SEEK_SET);
-			long fileSize = ftel(pFile);
+			long fileSize = ftell(pFile);
 			int numPackets = fileSize/498;
 			seqno= 1;
+			int chunksRead = 0;
 			while(chunksRead < numPackets){
 				/* create a packet */
 				chunksRead++;
@@ -133,7 +134,7 @@ int main(int argc, char *argv[]){
 				perror("writing on stream socket");
 			}
 			printf("Server sent packet %d, size: %d \n", seqno, rval);
-			free(filebuf;
+			free(filebuf);
 			
 			fclose(pFile);
 			printf("Server end time \n");
